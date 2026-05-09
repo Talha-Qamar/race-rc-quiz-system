@@ -1,0 +1,43 @@
+# Data files - store separately (not in Git)
+data/raw/
+data/processed/
+!data/README.md
+
+# Large files
+*.csv
+*.npz
+*.npy
+*.joblib
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Project
+artifacts/
+logs/
+*.log
