@@ -8,6 +8,16 @@ data/processed/
 *.npz
 *.npy
 *.joblib
+*.pkl
+
+# Generated model artifacts and caches
+models/**/word2vec_cache/
+models/**/*.png
+models/**/*.csv
+models/**/*.json
+models/**/*.kv
+models/**/*.npy
+models/**/*.npz
 
 # Python
 __pycache__/

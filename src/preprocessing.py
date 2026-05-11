@@ -15,6 +15,8 @@ from scipy.sparse import save_npz
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import nltk
 
+from features import build_verification_feature_matrix, combine_sparse_and_dense
+
 
 RAW_COLUMNS = ["id", "article", "question", "A", "B", "C", "D", "answer"]
 OPTION_COLUMNS = ["A", "B", "C", "D"]
@@ -29,7 +31,7 @@ _PUNCT_TRANSLATION = str.maketrans({symbol: " " for symbol in string.punctuation
 _WHITESPACE_RE = re.compile(r"\s+")
 
 
-@dataclass(slots=True)
+@dataclass
 class PreprocessConfig:
 	raw_dir: Path
 	processed_dir: Path
@@ -282,31 +284,37 @@ def save_split_outputs(frame: pd.DataFrame, processed_dir: Path, split_name: str
 def save_vectorized_outputs(option_frames: dict[str, pd.DataFrame], config: PreprocessConfig) -> dict[str, Path]:
 	artifacts_dir = config.processed_dir / "artifacts"
 	artifacts_dir.mkdir(parents=True, exist_ok=True)
+	models_dir = config.processed_dir.parents[1] / "models" / "model_a"
+	models_dir.mkdir(parents=True, exist_ok=True)
 
 	# Fit both TF-IDF (preferred) and BOW on train text; save both vectorizers.
 	train_text = option_frames["train"]["combined_text"].fillna("").tolist()
 	tfidf_vec = vectorizer_for("tfidf", config.max_features, config.ngram_max)
 	tfidf_vec.fit(train_text)
 	joblib.dump(tfidf_vec, artifacts_dir / "tfidf_vectorizer.joblib")
+	joblib.dump(tfidf_vec, models_dir / "tfidf_vectorizer.pkl")
 
 	bow_vec = vectorizer_for("onehot", config.max_features, config.ngram_max)
 	bow_vec.fit(train_text)
 	joblib.dump(bow_vec, artifacts_dir / "bow_vectorizer.joblib")
 
-	# Use config.vectorizer_kind to select primary matrix type
-	primary_vec = tfidf_vec if config.vectorizer_kind == "tfidf" else bow_vec
-
-	# Save train matrix
-	save_npz(config.processed_dir / "model_a_train_X.npz", primary_vec.transform(train_text))
+	# Build the combined sparse+dense feature matrix used by Model A.
+	train_sparse = tfidf_vec.transform(train_text)
+	train_dense = build_verification_feature_matrix(option_frames["train"], tfidf_vec)
+	train_matrix = combine_sparse_and_dense(train_sparse, train_dense)
+	save_npz(config.processed_dir / "model_a_train_X.npz", train_matrix)
 
 	saved_paths = {
 		"tfidf_vectorizer": artifacts_dir / "tfidf_vectorizer.joblib",
+		"tfidf_vectorizer_model": models_dir / "tfidf_vectorizer.pkl",
 		"bow_vectorizer": artifacts_dir / "bow_vectorizer.joblib",
 		"model_a_train_matrix": config.processed_dir / "model_a_train_X.npz",
 	}
 
 	for split_name, option_frame in option_frames.items():
-		matrix = primary_vec.transform(option_frame["combined_text"].fillna("").tolist())
+		text_matrix = tfidf_vec.transform(option_frame["combined_text"].fillna("").tolist())
+		dense_matrix = build_verification_feature_matrix(option_frame, tfidf_vec)
+		matrix = combine_sparse_and_dense(text_matrix, dense_matrix)
 		matrix_path = config.processed_dir / f"model_a_{split_name}_X.npz"
 		save_npz(matrix_path, matrix)
 
