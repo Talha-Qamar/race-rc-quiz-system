@@ -1,34 +1,131 @@
-# race-rc-quiz-system
-AI powered Reading Comprehension and Quiz Generation System using Classical Machine Learning, TF-IDF, SVM, Logistic Regression, and Streamlit on the RACE dataset.
+# RACE Reading Comprehension Quiz System
 
-## Model A status
+Classical-ML based reading comprehension and quiz generation pipeline built on the RACE dataset.
 
-The final tuned top-2 models are stored in `models/model_a/traditional/`.
+This repository contains an end-to-end project that:
+- verifies correct answers for MCQ items (Model A),
+- generates distractors and hints (Model B),
+- exposes both pipelines through a Streamlit interface.
 
-- Default single model: Random Forest
-- Backup / high-recall model: Logistic Regression
-- Inference entrypoint: `src/inference.py`
+## Why This Project
 
-Quick checks:
+This project demonstrates practical ML engineering skills for NLP systems:
+- text preprocessing and feature engineering,
+- supervised, semi-supervised, and unsupervised experimentation,
+- model evaluation, calibration, and comparison,
+- reproducible training/inference scripts,
+- interactive productization via Streamlit.
+
+## Tech Stack
+
+- Python 3.10+
+- scikit-learn, scipy, numpy, pandas
+- nltk, gensim
+- matplotlib
+- streamlit
+
+## Repository Structure
+
+```text
+src/                  Core training, inference, and experiment scripts
+ui/                   Streamlit app and UI helper components
+data/                 Dataset placeholders and storage policy docs
+models/               Model placeholders and artifact policy docs
+notebooks/            EDA and exploratory work
+scripts/              Utility scripts
+report/               Report assets
+```
+
+## Key Components
+
+### Model A: Answer Verification
+
+Primary inference entrypoint:
 
 ```bash
 python3 src/inference.py --model ensemble --split test
 python3 src/inference.py --model random_forest --split val
 ```
 
-## Streamlit UI
+### Model B: Distractor + Hint Generation
 
-The Model A tester UI lives in `ui/app.py`.
+Core pipeline modules:
+- `src/model_b_distractor.py`
+- `src/model_b_hint.py`
+- `src/model_b_inference.py`
 
-Run it with:
+### Streamlit Application
+
+Run:
 
 ```bash
 python3 -m streamlit run ui/app.py
 ```
 
-The UI includes:
+## Getting Started
 
-- a custom Model A tester for article/question/option input
-- a sample browser using corrected RACE data
-- a model summary panel with deployed metrics
-- a short explanation of how Model A works
+### 1. Clone
+
+```bash
+git clone https://github.com/Talha-Qamar/race-rc-quiz-system.git
+cd race-rc-quiz-system
+```
+
+### 2. Create Environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 3. Prepare Data and Artifacts
+
+This repo intentionally does not track large data/model binaries.
+
+See:
+- `data/README.md`
+- `models/README.md`
+
+### 4. Run
+
+```bash
+# example inference
+python3 src/inference.py --model ensemble --split val
+
+# launch UI
+python3 -m streamlit run ui/app.py
+```
+
+## Reproducibility Notes
+
+- Scripts assume the project root as working directory.
+- Processed arrays (`.npz`, `.npy`) and trained artifacts (`.joblib`, `.pkl`) are expected in local `data/` and `models/` directories.
+- Keep generated artifacts out of Git and publish them via external artifact storage.
+
+## Handling Large Files (Recommended)
+
+For a CV-ready and collaboration-friendly repository:
+
+1. Keep this code repository lightweight (code + docs only).
+2. Store datasets in an external dataset host (Kaggle Dataset, Google Drive, or S3).
+3. Store trained models in release assets, Hugging Face Hub, or a dedicated model bucket.
+4. If you need versioned large artifacts, adopt DVC for data/model lineage.
+
+## Suggested Repository Rename
+
+Current name is good, but this format is more portfolio-friendly:
+
+`race-rc-quiz-system-ml`
+
+Alternative:
+
+`reading-comprehension-quiz-generation`
+
+## License
+
+MIT License (see `LICENSE`).
+
+## Author
+
+Talha Qamar

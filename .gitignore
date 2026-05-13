@@ -1,23 +1,31 @@
-# Data files - store separately (not in Git)
-data/raw/
-data/processed/
+# Local datasets (keep docs/placeholders only)
+data/raw/**
+data/processed/**
 !data/README.md
+!data/**/.gitkeep
 
-# Large files
-*.csv
+# Local model artifacts (keep docs/placeholders only)
+models/**
+!models/README.md
+!models/**/.gitkeep
+!models/**/model_card.md
+
+# Common ML artifact formats
 *.npz
 *.npy
 *.joblib
 *.pkl
+*.h5
+*.pt
+*.pth
+*.onnx
 
-# Generated model artifacts and caches
+# Caches and experiment outputs
 models/**/word2vec_cache/
 models/**/*.png
 models/**/*.csv
 models/**/*.json
 models/**/*.kv
-models/**/*.npy
-models/**/*.npz
 
 # Python
 __pycache__/
@@ -30,6 +38,8 @@ dist/
 build/
 .venv/
 venv/
+.pytest_cache/
+.mypy_cache/
 
 # IDE
 .vscode/
@@ -51,3 +61,10 @@ Thumbs.db
 artifacts/
 logs/
 *.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Optional local env files
+.env
+.env.*
