@@ -1,130 +1,141 @@
 # RACE Reading Comprehension Quiz System
 
-Classical-ML based reading comprehension and quiz generation pipeline built on the RACE dataset.
+This project is a classical machine learning system for reading comprehension on the RACE dataset. It supports answer verification, distractor generation, hint generation, and an interactive Streamlit interface.
 
-This repository contains an end-to-end project that:
-- verifies correct answers for MCQ items (Model A),
-- generates distractors and hints (Model B),
-- exposes both pipelines through a Streamlit interface.
+## Project Summary
 
-## Why This Project
+The repository contains two core pipelines:
 
-This project demonstrates practical ML engineering skills for NLP systems:
-- text preprocessing and feature engineering,
-- supervised, semi-supervised, and unsupervised experimentation,
-- model evaluation, calibration, and comparison,
-- reproducible training/inference scripts,
-- interactive productization via Streamlit.
+1. Model A verifies the correct answer for a multiple-choice reading-comprehension question.
+2. Model B generates distractors and hints for the same question-answer setting.
 
-## Tech Stack
+The codebase uses classical NLP and ML techniques such as TF-IDF, handcrafted verification features, calibration, ranking, and supervised evaluation.
 
-- Python 3.10+
-- scikit-learn, scipy, numpy, pandas
-- nltk, gensim
-- matplotlib
-- streamlit
-
-## Repository Structure
+## Repository Map
 
 ```text
-src/                  Core training, inference, and experiment scripts
+src/                  Training, inference, preprocessing, and evaluation code
 ui/                   Streamlit app and UI helper components
-data/                 Dataset placeholders and storage policy docs
-models/               Model placeholders and artifact policy docs
-notebooks/            EDA and exploratory work
+data/                 Local data directory and storage notes
+models/               Local model directory and artifact notes
+notebooks/            EDA and experimentation notebooks
 scripts/              Utility scripts
-report/               Report assets
+report/               Report files and project write-up assets
+train_*.py            Training entry points for corrected/tuned models
+run_unsupervised_methods.sh  Script for unsupervised experiments
 ```
 
-## Key Components
+## Main Entry Points
 
-### Model A: Answer Verification
+- [src/inference.py](src/inference.py): Model A inference and evaluation CLI.
+- [ui/app.py](ui/app.py): Streamlit application.
+- [src/model_b_inference.py](src/model_b_inference.py): Model B generation workflow.
+- [train_corrected_models.py](train_corrected_models.py): Retrain corrected models.
+- [train_tuned_models.py](train_tuned_models.py): Retrain tuned models.
 
-Primary inference entrypoint:
+## Requirements
 
-```bash
-python3 src/inference.py --model ensemble --split test
-python3 src/inference.py --model random_forest --split val
-```
+- Python 3.10 or newer
+- pip
+- A virtual environment
 
-### Model B: Distractor + Hint Generation
+## Clone and Set Up
 
-Core pipeline modules:
-- `src/model_b_distractor.py`
-- `src/model_b_hint.py`
-- `src/model_b_inference.py`
-
-### Streamlit Application
-
-Run:
-
-```bash
-python3 -m streamlit run ui/app.py
-```
-
-## Getting Started
-
-### 1. Clone
+Run these commands from the repository root after cloning:
 
 ```bash
 git clone https://github.com/Talha-Qamar/race-rc-quiz-system.git
 cd race-rc-quiz-system
-```
 
-### 2. Create Environment
-
-```bash
 python3 -m venv .venv
 source .venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
-### 3. Prepare Data and Artifacts
+## Project Data and Artifacts
 
-This repo intentionally does not track large data/model binaries.
+The repository keeps large datasets and trained model binaries out of Git so the project stays easy to clone and manage.
 
-See:
-- `data/README.md`
-- `models/README.md`
+Place your local files in these folders:
 
-### 4. Run
+```text
+data/raw/
+data/processed/
+models/model_a/traditional/
+models/model_b/traditional/
+```
+
+The folder policies are documented in:
+- [data/README.md](data/README.md)
+- [models/README.md](models/README.md)
+
+If you are starting from a fresh clone, make sure the processed arrays and trained model files are copied into those paths before running inference or the UI.
+
+## How To Use the Project
+
+### 1. Run Model A inference
 
 ```bash
-# example inference
 python3 src/inference.py --model ensemble --split val
+python3 src/inference.py --model random_forest --split test
+```
 
-# launch UI
+### 2. Launch the Streamlit app
+
+```bash
 python3 -m streamlit run ui/app.py
 ```
 
-## Reproducibility Notes
+### 3. Retrain models
 
-- Scripts assume the project root as working directory.
-- Processed arrays (`.npz`, `.npy`) and trained artifacts (`.joblib`, `.pkl`) are expected in local `data/` and `models/` directories.
-- Keep generated artifacts out of Git and publish them via external artifact storage.
+```bash
+python3 train_corrected_models.py
+python3 train_tuned_models.py
+```
 
-## Handling Large Files (Recommended)
+### 4. Run unsupervised experiments
 
-For a CV-ready and collaboration-friendly repository:
+```bash
+bash run_unsupervised_methods.sh
+```
 
-1. Keep this code repository lightweight (code + docs only).
-2. Store datasets in an external dataset host (Kaggle Dataset, Google Drive, or S3).
-3. Store trained models in release assets, Hugging Face Hub, or a dedicated model bucket.
-4. If you need versioned large artifacts, adopt DVC for data/model lineage.
+## Folder Roles
 
-## Suggested Repository Rename
+### `src/`
 
-Current name is good, but this format is more portfolio-friendly:
+Contains the project logic for preprocessing, feature engineering, inference, training, and evaluation.
 
-`race-rc-quiz-system-ml`
+### `ui/`
 
-Alternative:
+Contains the Streamlit interface used to demonstrate the project interactively.
 
-`reading-comprehension-quiz-generation`
+### `data/`
+
+Contains local dataset files and processed arrays. This folder is excluded from Git to avoid large commits.
+
+### `models/`
+
+Contains trained model artifacts, evaluation outputs, and model cards. Large binaries should remain local or be published separately.
+
+### `notebooks/`
+
+Contains exploratory notebooks used during development.
+
+## Working With Your Own Data
+
+If you want to adapt this project for another dataset, keep the folder structure and replace the data files with your own CSV or processed artifacts. Then retrain the models using the training scripts and update the evaluation outputs accordingly.
+
+## Common Issues
+
+- Run commands from the repository root so relative paths resolve correctly.
+- If a script cannot find data, confirm that the files exist in `data/processed/`.
+- If a model cannot load, confirm that the artifact exists in the matching `models/.../traditional/` folder.
+- If Streamlit fails to start, confirm that the active environment has `streamlit` installed.
 
 ## License
 
-MIT License (see `LICENSE`).
+Licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Author
 
