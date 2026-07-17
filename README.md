@@ -25,6 +25,23 @@ train_*.py            Training entry points for corrected/tuned models
 run_unsupervised_methods.sh  Script for unsupervised experiments
 ```
 
+
+## Project Architecture
+
+
+Dataset
+   │
+Preprocessing
+   │
+TF-IDF + Feature Extraction
+   │
+Model A (Answer Verification)
+Model B (Distractor + Hint Generation)
+   │
+Streamlit Interface
+
+
+
 ## Main Entry Points
 
 - [src/inference.py](src/inference.py): Model A inference and evaluation CLI.
