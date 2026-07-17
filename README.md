@@ -140,3 +140,4 @@ Licensed under the MIT License. See [LICENSE](LICENSE).
 ## Author
 
 Talha Qamar
+Taaha Zaman Khan
